@@ -1,0 +1,14 @@
+{
+  "name": "@monochrome-ai/core",
+  "version": "0.1.0",
+  "description": "App-neutral AI and MCP security primitives shared across Monochrome applications.",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "require": "./dist/index.js", "default": "./dist/index.js" } },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": { "build": "tsc -p tsconfig.json", "test": "npm run build && node --test test/*.test.cjs", "check": "npm test" },
+  "engines": { "node": ">=20" },
+  "devDependencies": { "typescript": "^5.8.3", "@types/node": "^22.0.0" }
+}
