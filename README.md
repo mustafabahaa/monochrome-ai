@@ -1,12 +1,29 @@
 # Monochrome AI Core
 
-App-neutral AI runtime and security primitives shared by Monochrome applications.
+Shared AI infrastructure for Monochrome applications. It provides the Vercel AI SDK seams and safe Codex Harness execution; applications provide the product tools and data rules.
 
-The package centralizes Vercel AI SDK Harness/Codex process setup and security primitives. It deliberately does not own product behavior: each app retains its MCP servers, tool definitions and implementations, tool permissions, OAuth scopes, resource URLs, Firebase identity checks, storage collections, and user-facing errors. Apps pass their tool schemas and execution callbacks to the shared runtime.
+## New app boundary
 
-Included primitives: runCodexHarness for isolated Vercel AI SDK Harness execution; SHA-256 identifiers and opaque token generation; safe OAuth redirect and HTTPS-origin validation; scope normalization and public client metadata; AES-256-GCM JSON credential encryption with identity-bound associated data.
+Use `@monochrome-ui/design-system` for the assistant transcript and composer (`AssistantChat`). Use `@monochrome-ai/core/chat` for Vercel model invocation, message conversion, context limits, shared stream events, and stream-to-UI conversion. Use `@monochrome-ai/core` on trusted server code for Codex Harness execution and credential/security helpers.
 
-The runtime requires the host application to provide @ai-sdk/harness, @ai-sdk/harness-codex, @openai/codex, ai, and ws as peer dependencies. Apps should call it only after their own identity, authorization, and rate-limit checks have passed.
+An app should implement only the product-specific parts:
+
+- Its MCP servers and tool definitions/execution.
+- Its system instructions and the data those tools may read or change.
+- Its provider configuration, user authorization, confirmation policy, and persistence.
+- Its app-specific rendering for tool results, charts, and approval content passed into `AssistantChat`.
+
+Do not create another assistant transcript/composer, Vercel model-message converter, stream event protocol, or Harness process runner in an app. The shared chat entry is browser-safe; the package root includes Node-only functionality and belongs on trusted server code.
+
+## Shared APIs
+
+- `AssistantChat` from `@monochrome-ui/design-system`: common transcript, composer, scrolling, and message layout. Apps pass message content and app-specific slots.
+- `streamAssistantText`, `toAssistantModelMessages`, `textHistoryToModelMessages`, and `boundAssistantContext` from `@monochrome-ai/core/chat`: common Vercel AI SDK invocation and bounded message conversion.
+- `assistantEventsToUIMessageStream` and `assistantTextToUIMessageStream` from `@monochrome-ai/core/chat`: standard conversion to the Vercel AI SDK UI stream format.
+- `runCodexHarness` from `@monochrome-ai/core`: common isolated Codex/Harness execution. The app passes its own tools and policy callbacks.
+- OAuth, opaque-token, and encrypted-credential helpers from `@monochrome-ai/core`: common security mechanics; identity and authorization decisions remain app-owned.
+
+The runtime requires the host application to provide `@ai-sdk/harness`, `@ai-sdk/harness-codex`, `@openai/codex`, `ai`, and `ws` as peer dependencies. Call server helpers only after the app has checked identity, authorization, and rate limits.
 
 ```sh
 npm install
