@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HarnessRuntimeError = exports.runCodexHarness = void 0;
 exports.sha256 = sha256;
 exports.createOpaqueToken = createOpaqueToken;
 exports.isSafeOAuthRedirect = isSafeOAuthRedirect;
@@ -10,6 +11,9 @@ exports.createOAuthTokenResponse = createOAuthTokenResponse;
 exports.encryptJsonCredential = encryptJsonCredential;
 exports.decryptJsonCredential = decryptJsonCredential;
 const node_crypto_1 = require("node:crypto");
+var harness_1 = require("./harness");
+Object.defineProperty(exports, "runCodexHarness", { enumerable: true, get: function () { return harness_1.runCodexHarness; } });
+Object.defineProperty(exports, "HarnessRuntimeError", { enumerable: true, get: function () { return harness_1.HarnessRuntimeError; } });
 /** Hash bearer credentials before using them as persistent identifiers. */
 function sha256(value) {
     return (0, node_crypto_1.createHash)('sha256').update(value).digest('hex');

@@ -1,3 +1,5 @@
+export { runCodexHarness, HarnessRuntimeError } from './harness';
+export type { CodexHarnessRequest, HarnessTool, HarnessToolCall, HarnessToolPolicy, HarnessToolResult } from './harness';
 export type EncryptedJson = {
     ciphertext: string;
     iv: string;

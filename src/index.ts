@@ -1,4 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+export { runCodexHarness, HarnessRuntimeError } from './harness';
+export type { CodexHarnessRequest, HarnessTool, HarnessToolCall, HarnessToolPolicy, HarnessToolResult } from './harness';
 
 export type EncryptedJson = { ciphertext: string; iv: string; tag: string };
 export type OAuthTokenResponse = {
