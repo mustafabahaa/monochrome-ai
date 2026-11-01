@@ -3,6 +3,13 @@ export type EncryptedJson = {
     iv: string;
     tag: string;
 };
+export type OAuthTokenResponse = {
+    access_token: string;
+    refresh_token?: string;
+    token_type: 'Bearer';
+    expires_in: number;
+    scope: string;
+};
 /** Hash bearer credentials before using them as persistent identifiers. */
 export declare function sha256(value: string): string;
 /** Create an unguessable opaque token with an app-specific prefix. */
@@ -17,6 +24,8 @@ export declare function normalizeOAuthScopes(scopes: string[] | undefined, readS
 export declare function publicOAuthClientMetadata<T extends Record<string, unknown>>(client: T): T & {
     token_endpoint_auth_method: 'none';
 };
+/** Builds the consistent OAuth bearer response while leaving token lifetimes app-configurable. */
+export declare function createOAuthTokenResponse(accessToken: string, refreshToken: string | undefined, scopes: string[], accessTokenTtlMs: number): OAuthTokenResponse;
 /** Encrypt JSON using AES-256-GCM and identity-bound associated data. */
 export declare function encryptJsonCredential(value: unknown, key: Uint8Array, associatedData: string): EncryptedJson;
 /** Decrypt only when both the key and identity-bound associated data match. */

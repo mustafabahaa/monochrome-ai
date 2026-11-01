@@ -6,6 +6,7 @@ exports.isSafeOAuthRedirect = isSafeOAuthRedirect;
 exports.requireHttpsOrigin = requireHttpsOrigin;
 exports.normalizeOAuthScopes = normalizeOAuthScopes;
 exports.publicOAuthClientMetadata = publicOAuthClientMetadata;
+exports.createOAuthTokenResponse = createOAuthTokenResponse;
 exports.encryptJsonCredential = encryptJsonCredential;
 exports.decryptJsonCredential = decryptJsonCredential;
 const node_crypto_1 = require("node:crypto");
@@ -52,6 +53,16 @@ function normalizeOAuthScopes(scopes, readScope, allowedScopes) {
 function publicOAuthClientMetadata(client) {
     const metadata = Object.fromEntries(Object.entries(client).filter(([key]) => key !== 'client_secret' && key !== 'client_secret_expires_at'));
     return { ...metadata, token_endpoint_auth_method: 'none' };
+}
+/** Builds the consistent OAuth bearer response while leaving token lifetimes app-configurable. */
+function createOAuthTokenResponse(accessToken, refreshToken, scopes, accessTokenTtlMs) {
+    return {
+        access_token: accessToken,
+        ...(refreshToken ? { refresh_token: refreshToken } : {}),
+        token_type: 'Bearer',
+        expires_in: accessTokenTtlMs / 1000,
+        scope: scopes.join(' '),
+    };
 }
 /** Encrypt JSON using AES-256-GCM and identity-bound associated data. */
 function encryptJsonCredential(value, key, associatedData) {
