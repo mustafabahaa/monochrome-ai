@@ -1,8 +1,15 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 export { runCodexHarness, HarnessRuntimeError } from './harness';
 export type { CodexHarnessRequest, HarnessTool, HarnessToolCall, HarnessToolPolicy, HarnessToolResult } from './harness';
-export { boundAssistantContext, serializeAssistantParts, textHistoryToModelMessages, toAssistantModelMessages } from './chat';
-export type { AssistantContextLimits, AssistantStreamEvent } from './chat';
+export {
+  boundAssistantContext,
+  boundAssistantTextHistory,
+  assistantEventsToUIMessageStream,
+  serializeAssistantParts,
+  textHistoryToModelMessages,
+  toAssistantModelMessages,
+} from './chat';
+export type { AssistantContextLimits, AssistantStreamEvent, AssistantToolCallHandler } from './chat';
 
 export type EncryptedJson = { ciphertext: string; iv: string; tag: string };
 export type OAuthTokenResponse = {
