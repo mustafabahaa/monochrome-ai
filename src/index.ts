@@ -1,6 +1,13 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 
 export type EncryptedJson = { ciphertext: string; iv: string; tag: string };
+export type OAuthTokenResponse = {
+  access_token: string;
+  refresh_token?: string;
+  token_type: 'Bearer';
+  expires_in: number;
+  scope: string;
+};
 
 /** Hash bearer credentials before using them as persistent identifiers. */
 export function sha256(value: string): string {
@@ -47,6 +54,22 @@ export function publicOAuthClientMetadata<T extends Record<string, unknown>>(
 ): T & { token_endpoint_auth_method: 'none' } {
   const metadata = Object.fromEntries(Object.entries(client).filter(([key]) => key !== 'client_secret' && key !== 'client_secret_expires_at'));
   return { ...metadata, token_endpoint_auth_method: 'none' } as T & { token_endpoint_auth_method: 'none' };
+}
+
+/** Builds the consistent OAuth bearer response while leaving token lifetimes app-configurable. */
+export function createOAuthTokenResponse(
+  accessToken: string,
+  refreshToken: string | undefined,
+  scopes: string[],
+  accessTokenTtlMs: number,
+): OAuthTokenResponse {
+  return {
+    access_token: accessToken,
+    ...(refreshToken ? { refresh_token: refreshToken } : {}),
+    token_type: 'Bearer',
+    expires_in: accessTokenTtlMs / 1000,
+    scope: scopes.join(' '),
+  };
 }
 
 /** Encrypt JSON using AES-256-GCM and identity-bound associated data. */

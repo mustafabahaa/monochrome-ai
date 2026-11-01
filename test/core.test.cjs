@@ -22,6 +22,12 @@ test('normalizes scopes and strips confidential metadata', () => {
   assert.deepEqual(core.publicOAuthClientMetadata({ client_id: 'id', client_secret: 'secret', client_secret_expires_at: 1 }), { client_id: 'id', token_endpoint_auth_method: 'none' });
 });
 
+test('formats bearer token responses consistently', () => {
+  assert.deepEqual(core.createOAuthTokenResponse('access', undefined, ['app:read'], 3600000), {
+    access_token: 'access', token_type: 'Bearer', expires_in: 3600, scope: 'app:read',
+  });
+});
+
 test('encrypts credentials and binds ciphertext to identity', () => {
   const key = Buffer.alloc(32, 7);
   const encrypted = core.encryptJsonCredential({ access: 'secret' }, key, 'uid:codex');
