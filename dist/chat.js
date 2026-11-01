@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.streamAssistantText = streamAssistantText;
+exports.assistantTextToUIMessageStream = assistantTextToUIMessageStream;
 exports.boundAssistantContext = boundAssistantContext;
 exports.toAssistantModelMessages = toAssistantModelMessages;
 exports.textHistoryToModelMessages = textHistoryToModelMessages;
@@ -7,6 +9,14 @@ exports.boundAssistantTextHistory = boundAssistantTextHistory;
 exports.serializeAssistantParts = serializeAssistantParts;
 exports.assistantEventsToUIMessageStream = assistantEventsToUIMessageStream;
 const ai_1 = require("ai");
+/** One shared Vercel AI SDK invocation seam; providers and tool registries stay app-owned. */
+function streamAssistantText(options) {
+    return (0, ai_1.streamText)(options);
+}
+/** Convert Vercel's text/tool stream into the UI message stream used by useChat. */
+function assistantTextToUIMessageStream(stream, onError) {
+    return (0, ai_1.toUIMessageStream)({ stream, ...(onError ? { onError } : {}) });
+}
 const defaultLimits = {
     maxMessages: 50,
     maxCharacters: 180_000,

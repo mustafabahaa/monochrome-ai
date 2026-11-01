@@ -1,6 +1,6 @@
 {
   "name": "@monochrome-ai/core",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "App-neutral AI runtime and security primitives shared across Monochrome applications.",
   "license": "UNLICENSED",
   "type": "commonjs",

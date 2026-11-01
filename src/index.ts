@@ -5,7 +5,9 @@ export {
   boundAssistantContext,
   boundAssistantTextHistory,
   assistantEventsToUIMessageStream,
+  assistantTextToUIMessageStream,
   serializeAssistantParts,
+  streamAssistantText,
   textHistoryToModelMessages,
   toAssistantModelMessages,
 } from './chat';

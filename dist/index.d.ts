@@ -1,6 +1,6 @@
 export { runCodexHarness, HarnessRuntimeError } from './harness';
 export type { CodexHarnessRequest, HarnessTool, HarnessToolCall, HarnessToolPolicy, HarnessToolResult } from './harness';
-export { boundAssistantContext, boundAssistantTextHistory, assistantEventsToUIMessageStream, serializeAssistantParts, textHistoryToModelMessages, toAssistantModelMessages, } from './chat';
+export { boundAssistantContext, boundAssistantTextHistory, assistantEventsToUIMessageStream, assistantTextToUIMessageStream, serializeAssistantParts, streamAssistantText, textHistoryToModelMessages, toAssistantModelMessages, } from './chat';
 export type { AssistantContextLimits, AssistantStreamEvent, AssistantToolCallHandler } from './chat';
 export type EncryptedJson = {
     ciphertext: string;

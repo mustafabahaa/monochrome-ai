@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toAssistantModelMessages = exports.textHistoryToModelMessages = exports.serializeAssistantParts = exports.assistantEventsToUIMessageStream = exports.boundAssistantTextHistory = exports.boundAssistantContext = exports.HarnessRuntimeError = exports.runCodexHarness = void 0;
+exports.toAssistantModelMessages = exports.textHistoryToModelMessages = exports.streamAssistantText = exports.serializeAssistantParts = exports.assistantTextToUIMessageStream = exports.assistantEventsToUIMessageStream = exports.boundAssistantTextHistory = exports.boundAssistantContext = exports.HarnessRuntimeError = exports.runCodexHarness = void 0;
 exports.sha256 = sha256;
 exports.createOpaqueToken = createOpaqueToken;
 exports.isSafeOAuthRedirect = isSafeOAuthRedirect;
@@ -18,7 +18,9 @@ var chat_1 = require("./chat");
 Object.defineProperty(exports, "boundAssistantContext", { enumerable: true, get: function () { return chat_1.boundAssistantContext; } });
 Object.defineProperty(exports, "boundAssistantTextHistory", { enumerable: true, get: function () { return chat_1.boundAssistantTextHistory; } });
 Object.defineProperty(exports, "assistantEventsToUIMessageStream", { enumerable: true, get: function () { return chat_1.assistantEventsToUIMessageStream; } });
+Object.defineProperty(exports, "assistantTextToUIMessageStream", { enumerable: true, get: function () { return chat_1.assistantTextToUIMessageStream; } });
 Object.defineProperty(exports, "serializeAssistantParts", { enumerable: true, get: function () { return chat_1.serializeAssistantParts; } });
+Object.defineProperty(exports, "streamAssistantText", { enumerable: true, get: function () { return chat_1.streamAssistantText; } });
 Object.defineProperty(exports, "textHistoryToModelMessages", { enumerable: true, get: function () { return chat_1.textHistoryToModelMessages; } });
 Object.defineProperty(exports, "toAssistantModelMessages", { enumerable: true, get: function () { return chat_1.toAssistantModelMessages; } });
 /** Hash bearer credentials before using them as persistent identifiers. */

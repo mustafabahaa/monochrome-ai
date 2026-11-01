@@ -1,4 +1,4 @@
-import { type ModelMessage, type UIMessage, type UIMessageChunk } from 'ai';
+import { streamText, toUIMessageStream, type ModelMessage, type UIMessage, type UIMessageChunk } from 'ai';
 export type AssistantStreamEvent = {
     type: 'text';
     text: string;
@@ -28,6 +28,10 @@ export type AssistantStreamEvent = {
 export type AssistantToolCallHandler = (call: Extract<AssistantStreamEvent, {
     type: 'tool-call';
 }>) => Promise<unknown>;
+/** One shared Vercel AI SDK invocation seam; providers and tool registries stay app-owned. */
+export declare function streamAssistantText(options: Parameters<typeof streamText>[0]): ReturnType<typeof streamText>;
+/** Convert Vercel's text/tool stream into the UI message stream used by useChat. */
+export declare function assistantTextToUIMessageStream(stream: Parameters<typeof toUIMessageStream>[0]['stream'], onError?: (error: unknown) => string): ReadableStream<UIMessageChunk>;
 export type AssistantContextLimits = {
     maxMessages?: number;
     maxCharacters?: number;
