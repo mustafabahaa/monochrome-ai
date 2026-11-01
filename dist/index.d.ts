@@ -1,5 +1,7 @@
 export { runCodexHarness, HarnessRuntimeError } from './harness';
 export type { CodexHarnessRequest, HarnessTool, HarnessToolCall, HarnessToolPolicy, HarnessToolResult } from './harness';
+export { boundAssistantContext, serializeAssistantParts, textHistoryToModelMessages, toAssistantModelMessages } from './chat';
+export type { AssistantContextLimits, AssistantStreamEvent } from './chat';
 export type EncryptedJson = {
     ciphertext: string;
     iv: string;
