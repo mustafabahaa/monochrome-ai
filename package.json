@@ -1,6 +1,6 @@
 {
   "name": "@monochrome-ai/core",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "App-neutral AI runtime and security primitives shared across Monochrome applications.",
   "license": "UNLICENSED",
   "type": "commonjs",
@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./chat": {
+      "types": "./dist/chat.d.ts",
+      "require": "./dist/chat.js",
+      "default": "./dist/chat.js"
     }
   },
   "files": [
