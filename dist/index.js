@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toAssistantModelMessages = exports.textHistoryToModelMessages = exports.serializeAssistantParts = exports.boundAssistantContext = exports.HarnessRuntimeError = exports.runCodexHarness = void 0;
+exports.toAssistantModelMessages = exports.textHistoryToModelMessages = exports.serializeAssistantParts = exports.assistantEventsToUIMessageStream = exports.boundAssistantTextHistory = exports.boundAssistantContext = exports.HarnessRuntimeError = exports.runCodexHarness = void 0;
 exports.sha256 = sha256;
 exports.createOpaqueToken = createOpaqueToken;
 exports.isSafeOAuthRedirect = isSafeOAuthRedirect;
@@ -16,6 +16,8 @@ Object.defineProperty(exports, "runCodexHarness", { enumerable: true, get: funct
 Object.defineProperty(exports, "HarnessRuntimeError", { enumerable: true, get: function () { return harness_1.HarnessRuntimeError; } });
 var chat_1 = require("./chat");
 Object.defineProperty(exports, "boundAssistantContext", { enumerable: true, get: function () { return chat_1.boundAssistantContext; } });
+Object.defineProperty(exports, "boundAssistantTextHistory", { enumerable: true, get: function () { return chat_1.boundAssistantTextHistory; } });
+Object.defineProperty(exports, "assistantEventsToUIMessageStream", { enumerable: true, get: function () { return chat_1.assistantEventsToUIMessageStream; } });
 Object.defineProperty(exports, "serializeAssistantParts", { enumerable: true, get: function () { return chat_1.serializeAssistantParts; } });
 Object.defineProperty(exports, "textHistoryToModelMessages", { enumerable: true, get: function () { return chat_1.textHistoryToModelMessages; } });
 Object.defineProperty(exports, "toAssistantModelMessages", { enumerable: true, get: function () { return chat_1.toAssistantModelMessages; } });

@@ -1,4 +1,4 @@
-import { type ModelMessage, type UIMessage } from 'ai';
+import { type ModelMessage, type UIMessage, type UIMessageChunk } from 'ai';
 export type AssistantStreamEvent = {
     type: 'text';
     text: string;
@@ -25,6 +25,9 @@ export type AssistantStreamEvent = {
     code?: string;
     message: string;
 };
+export type AssistantToolCallHandler = (call: Extract<AssistantStreamEvent, {
+    type: 'tool-call';
+}>) => Promise<unknown>;
 export type AssistantContextLimits = {
     maxMessages?: number;
     maxCharacters?: number;
@@ -40,5 +43,15 @@ export declare function textHistoryToModelMessages(messages: Array<{
     role: 'user' | 'assistant';
     content: string;
 }>, maxCharacters?: number): Promise<ModelMessage[]>;
+/** Keep the newest plain-text conversation turns that fit a character budget. */
+export declare function boundAssistantTextHistory<T extends {
+    role: 'user' | 'assistant';
+    content: string;
+}>(messages: T[], maxCharacters?: number): T[];
 /** Serialize UI parts for persistence or a text-based remote tool bridge. */
 export declare function serializeAssistantParts(parts: UIMessage['parts'], maxCharacters: number): string;
+/** Convert the shared app-neutral event protocol into Vercel AI SDK UI stream chunks. */
+export declare function assistantEventsToUIMessageStream(events: AsyncIterable<AssistantStreamEvent>, options?: {
+    signal?: AbortSignal;
+    onToolCall?: AssistantToolCallHandler;
+}): ReadableStream<UIMessageChunk>;

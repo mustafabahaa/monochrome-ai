@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.boundAssistantContext = boundAssistantContext;
 exports.toAssistantModelMessages = toAssistantModelMessages;
 exports.textHistoryToModelMessages = textHistoryToModelMessages;
+exports.boundAssistantTextHistory = boundAssistantTextHistory;
 exports.serializeAssistantParts = serializeAssistantParts;
+exports.assistantEventsToUIMessageStream = assistantEventsToUIMessageStream;
 const ai_1 = require("ai");
 const defaultLimits = {
     maxMessages: 50,
@@ -44,17 +46,22 @@ async function toAssistantModelMessages(messages, limits) {
 }
 /** Create Vercel AI SDK model history from persisted plain-text chat messages. */
 async function textHistoryToModelMessages(messages, maxCharacters = defaultLimits.maxCharacters) {
+    const bounded = boundAssistantTextHistory(messages, maxCharacters);
+    return (0, ai_1.convertToModelMessages)(bounded.map((message, index) => ({
+        id: `history-${index}`,
+        role: message.role,
+        parts: [{ type: 'text', text: message.content }],
+    })));
+}
+/** Keep the newest plain-text conversation turns that fit a character budget. */
+function boundAssistantTextHistory(messages, maxCharacters = defaultLimits.maxCharacters) {
     const bounded = [...messages];
     let size = JSON.stringify(bounded).length;
     while (size > maxCharacters && bounded.length > 1) {
         bounded.shift();
         size = JSON.stringify(bounded).length;
     }
-    return (0, ai_1.convertToModelMessages)(bounded.map((message, index) => ({
-        id: `history-${index}`,
-        role: message.role,
-        parts: [{ type: 'text', text: message.content }],
-    })));
+    return bounded;
 }
 /** Serialize UI parts for persistence or a text-based remote tool bridge. */
 function serializeAssistantParts(parts, maxCharacters) {
@@ -62,4 +69,70 @@ function serializeAssistantParts(parts, maxCharacters) {
     return serialized.length <= maxCharacters
         ? serialized
         : JSON.stringify([{ type: 'text', text: '[Older tool transcript omitted from model context because it exceeded the model limit.]' }]);
+}
+/** Convert the shared app-neutral event protocol into Vercel AI SDK UI stream chunks. */
+function assistantEventsToUIMessageStream(events, options = {}) {
+    const controller = new AbortController();
+    const abort = () => controller.abort(options.signal?.reason);
+    options.signal?.addEventListener('abort', abort, { once: true });
+    if (options.signal?.aborted)
+        abort();
+    return new ReadableStream({
+        async start(stream) {
+            let textId;
+            const endText = () => {
+                if (textId)
+                    stream.enqueue({ type: 'text-end', id: textId });
+                textId = undefined;
+            };
+            try {
+                stream.enqueue({ type: 'start', messageId: crypto.randomUUID() });
+                stream.enqueue({ type: 'start-step' });
+                for await (const event of events) {
+                    controller.signal.throwIfAborted();
+                    if (event.type === 'text') {
+                        if (!textId) {
+                            textId = crypto.randomUUID();
+                            stream.enqueue({ type: 'text-start', id: textId });
+                        }
+                        stream.enqueue({ type: 'text-delta', id: textId, delta: event.text });
+                    }
+                    else if (event.type === 'tool-call') {
+                        endText();
+                        stream.enqueue({ type: 'tool-input-available', toolCallId: event.id, toolName: event.name, input: event.input });
+                        try {
+                            if (!options.onToolCall)
+                                throw new Error(`No handler is registered for ${event.name}`);
+                            const output = await options.onToolCall(event);
+                            stream.enqueue({ type: 'tool-output-available', toolCallId: event.id, output: output ?? null });
+                        }
+                        catch (error) {
+                            stream.enqueue({
+                                type: 'tool-output-error',
+                                toolCallId: event.id,
+                                errorText: error instanceof Error ? error.message : 'The tool could not be completed.',
+                            });
+                        }
+                    }
+                    else if (event.type === 'error') {
+                        throw new Error(event.message);
+                    }
+                }
+                endText();
+                stream.enqueue({ type: 'finish-step' });
+                stream.enqueue({ type: 'finish', finishReason: 'stop' });
+                stream.close();
+            }
+            catch (error) {
+                stream.error(error);
+            }
+            finally {
+                controller.abort();
+                options.signal?.removeEventListener('abort', abort);
+            }
+        },
+        cancel() {
+            controller.abort();
+        },
+    });
 }
